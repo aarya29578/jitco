@@ -1,0 +1,124 @@
+//BEFORE THE ADDING THE GETSTORAGE:
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+//Model
+class CartItem {
+  final String id;
+  final String name;
+  final String image;
+  final double price;
+  int quantity;
+  final String categorySlug;
+  String? selectedVariant;
+
+  CartItem({
+    required this.id,
+    required this.name,
+    required this.image,
+    required this.price,
+    this.quantity = 1,
+    required this.categorySlug,
+    this.selectedVariant,
+  });
+
+  double get totalPrice => price * quantity;
+
+  //Tax for single item
+  double get perPriceTax => price * 0.05;
+
+  //Tax for group item
+  double get groupPerPriceTax => perPriceTax * quantity;
+}
+
+//Controller
+class CartController extends GetxController {
+  var cartItems = <CartItem>[].obs;
+  var isLoading = false.obs;
+
+  // Get total items count
+  int get totalItems => cartItems.fold(0, (sum, item) => sum + item.quantity);
+
+  // Get total price
+  double get totalPrice =>
+      cartItems.fold(0, (sum, item) => sum + item.totalPrice);
+
+  // Get total GST price for group product
+  double get totalPerPriceTax =>
+      cartItems.fold(0, (sum, item) => sum + item.groupPerPriceTax);
+
+  double get grandTotal => totalPrice + totalPerPriceTax;
+
+  // Add item to cart
+  void addToCart(CartItem newItem) {
+    final existingItemIndex = cartItems.indexWhere(
+      (item) => item.id == newItem.id,
+    );
+
+    if (existingItemIndex != -1) {
+      // Item already exists, increase quantity
+      cartItems[existingItemIndex].quantity += newItem.quantity;
+      cartItems.refresh();
+    } else {
+      // Add new item
+      cartItems.add(newItem);
+    }
+
+    // Show success message
+    Get.snackbar(
+      'Success',
+      '${newItem.name} added to cart',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+    );
+  }
+
+  // Remove item from cart
+  void removeFromCart(String itemId) {
+    cartItems.removeWhere((item) => item.id == itemId);
+  }
+
+  // Update item quantity
+  void updateQuantity(String itemId, int newQuantity) {
+    if (newQuantity <= 0) {
+      removeFromCart(itemId);
+      return;
+    }
+
+    final itemIndex = cartItems.indexWhere((item) => item.id == itemId);
+    if (itemIndex != -1) {
+      cartItems[itemIndex].quantity = newQuantity;
+      cartItems.refresh();
+    }
+  }
+
+  // Update item variant
+  void updateVariant(String itemId, String variant) {
+    final itemIndex = cartItems.indexWhere((item) => item.id == itemId);
+    if (itemIndex != -1) {
+      cartItems[itemIndex].selectedVariant = variant;
+      cartItems.refresh();
+    }
+  }
+
+  // Clear entire cart
+  void clearCart() {
+    cartItems.clear();
+  }
+
+  // Check if cart is empty
+  bool get isCartEmpty => cartItems.isEmpty;
+
+  // Get item count for a specific product
+  int getItemQuantity(String productId) {
+    final item = cartItems.firstWhereOrNull((item) => item.id == productId);
+    return item?.quantity ?? 0;
+  }
+
+  // void gst() {
+  //   double get totalPrice =>
+  //     cartItems.fold(0, (sum, item) => sum + item.totalPrice);
+
+  // }
+}

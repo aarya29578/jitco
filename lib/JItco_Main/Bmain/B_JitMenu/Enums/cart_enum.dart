@@ -1,0 +1,1 @@
+enum CartType { food, jmMenu }
