@@ -90,17 +90,22 @@ class _JsCartScreenState extends State<JsCartScreen> {
     return jlpriceService.calculateGSTAmount(calculatedPrice, gstPercentage);
   }
 
-  double get _calculatedTotalGST {
-    double totalGST = 0;
-    for (var item in jsCartController.cartItems) {
-      final price =
-          _calculateItemPrice(item) ?? (item.originalPrice ?? item.price);
-      final gstPercentage =
-          double.tryParse(_getItemGST(item)) ?? item.gstPercentage;
-      totalGST += (price * (gstPercentage ?? 0 / 100)) * item.quantity;
-    }
-    return totalGST;
+ double get _calculatedTotalGST {
+  double totalGST = 0;
+
+  for (var item in jsCartController.cartItems) {
+    final price =
+        _calculateItemPrice(item) ?? (item.originalPrice ?? item.price);
+
+    final gstPercentage =
+        double.tryParse(_getItemGST(item)) ??
+        (item.gstPercentage ?? 0.0);
+
+    totalGST += (price * (gstPercentage / 100)) * item.quantity;
   }
+
+  return totalGST;
+}
 
   double get _calculatedGrandTotal {
     return _grandTotal + _calculatedTotalGST;

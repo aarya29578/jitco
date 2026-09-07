@@ -132,15 +132,32 @@ class _CartScreenState extends State<CartScreen> {
   // }
 
   // Calculate all totals using new logic(summary)
-  double get _calculatedTotalPrice {
-    double total = 0;
-    for (var item in cartController.cartItems) {
-      final price =
-          _calculateItemPrice(item) ?? (item.originalPrice ?? item.price);
-      total += price * item.quantity;
-    }
-    return total;
+ double get _calculatedTotalPrice {
+  print('========== TOTAL PRICE DEBUG ==========');
+  print('Cart items count: ${cartController.cartItems.length}');
+
+  double total = 0;
+
+  for (var item in cartController.cartItems) {
+    print('---------------------------------------');
+    print('Product       : ${item.name}');
+    print('item.price    : ${item.price}');
+    print('originalPrice : ${item.originalPrice}');
+    print('quantity      : ${item.quantity}');
+
+    final price = _calculateItemPrice(item);
+
+    print('price used    : $price');
+    print('item total    : ${price * item.quantity}');
+
+    total += price * item.quantity;
   }
+
+  print('FINAL TOTAL PRICE = $total');
+  print('=======================================');
+
+  return total;
+}
 
   double get _calculatedTotalGST {
     double totalGST = 0;

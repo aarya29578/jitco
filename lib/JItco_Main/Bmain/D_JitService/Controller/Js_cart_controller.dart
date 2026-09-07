@@ -487,16 +487,44 @@ class JsCartcontroller extends GetxController {
   // Get total items count
   int get totalItems => cartItems.fold(0, (sum, item) => sum + item.quantity);
 
-  // Get total price
-  double get totalPrice =>
-      cartItems.fold(0, (sum, item) => sum + item.totalPrice);
+ // Get total price
+double get totalPrice {
+  for (final item in cartItems) {
+    print('========== CART PRICE DEBUG ==========');
+    print('Product: ${item.name}');
+    print('item.price: ${item.price}');
+    print('item.quantity: ${item.quantity}');
+    print('item.gstPercentage: ${item.gstPercentage}');
+    print('item.totalPrice: ${item.totalPrice}');
+    print('item.perPriceTax: ${item.perPriceTax}');
+    print('item.groupPerPriceTax: ${item.groupPerPriceTax}');
+    print('======================================');
+  }
 
-  // Get total GST price for group product
-  double get totalPerPriceTax =>
-      cartItems.fold(0, (sum, item) => sum + item.groupPerPriceTax);
+  return cartItems.fold(
+    0,
+    (sum, item) => sum + item.totalPrice,
+  );
+}
 
-  // Get grand total
-  double get grandTotal => totalPrice + totalPerPriceTax;
+// Get total GST price for group product
+double get totalPerPriceTax =>
+    cartItems.fold(0, (sum, item) => sum + item.groupPerPriceTax);
+
+// Get grand total
+double get grandTotal {
+  final result = totalPrice + totalPerPriceTax;
+
+  print('******** GRAND TOTAL DEBUG ********');
+  print('totalPrice = $totalPrice');
+  print('totalPerPriceTax = $totalPerPriceTax');
+  print('grandTotal = $result');
+  print('***********************************');
+
+  return result;
+}
+
+
 
   // Check if any prices have been changed
   bool get hasPriceChanges => cartItems.any(

@@ -518,7 +518,7 @@ class JMApiService extends GetxService {
           'message': 'Company ID not found. Please login again.',
         };
       }
-
+    
       print('========= JM ENQUIRY REQUEST =========');
       print('Company: $companyId');
       print('Product: $productId');
@@ -543,7 +543,7 @@ class JMApiService extends GetxService {
           'product': productId,
           'quantity': quantity ?? 1,
           'source': 'JitMenu',
-          "device_source": "mobile"
+          "device_source": "mobile",
            // Explicitly send source in body
           'progress': [
             {'comments': comments, 'statusList': 'From Customer'},
